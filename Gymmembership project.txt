@@ -1,0 +1,136 @@
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+
+class Member {
+    int id;
+    String name;
+    int age;
+    String membershipType;
+    String workoutPlan;
+    boolean paymentStatus;
+
+    public Member(int id, String name, int age, String membershipType) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.membershipType = membershipType;
+        this.workoutPlan = "Not Assigned";
+        this.paymentStatus = false;
+    }
+
+    public void display() {
+        System.out.println("ID: " + id);
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Membership Type: " + membershipType);
+        System.out.println("Workout Plan: " + workoutPlan);
+        System.out.println("Payment Status: " + (paymentStatus ? "Paid" : "Pending"));
+        System.out.println("-------------------------------");
+    }
+}
+
+public class GymManagementSystem {
+    static Scanner scanner = new Scanner(System.in);
+    static List<Member> members = new ArrayList<>();
+    static int nextId = 1;
+
+    public static void main(String[] args) {
+        int choice = -1;
+
+        while (choice != 5) {
+            try {
+                System.out.println("\n----- Gym Membership Management System -----");
+                System.out.println("1. Add Member");
+                System.out.println("2. View All Members");
+                System.out.println("3. Assign Workout Plan");
+                System.out.println("4. Update Payment Status");
+                System.out.println("5. Exit");
+                System.out.print("Enter your choice: ");
+                choice = Integer.parseInt(scanner.nextLine());
+
+                switch (choice) {
+                    case 1 -> addMember();
+                    case 2 -> viewMembers();
+                    case 3 -> assignWorkout();
+                    case 4 -> updatePayment();
+                    case 5 -> System.out.println("Exiting system");
+                    default -> System.out.println("Invalid choice");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println(" Invalid input. Please enter a number");
+            } catch (Exception e) {
+                System.out.println("Unexpected error: " + e.getMessage());
+            }
+        }
+    }
+
+    static void addMember() {
+        try {
+            System.out.print("Enter name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter age: ");
+            int age = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enter membership type (Monthly/Yearly): ");
+            String membershipType = scanner.nextLine();
+
+            Member newMember = new Member(nextId++, name, age, membershipType);
+            members.add(newMember);
+            System.out.println("Member added successfully");
+        } catch (NumberFormatException e) {
+            System.out.println("Age must be a number");
+        }
+    }
+
+    static void viewMembers() {
+        if (members.isEmpty()) {
+            System.out.println("No members to displa");
+        } else {
+            System.out.println("\n--- Member List ---");
+            for (Member member : members) {
+                member.display();
+            }
+        }
+    }
+
+    static void assignWorkout() {
+        try {
+            System.out.print("Enter member ID: ");
+            int id = Integer.parseInt(scanner.nextLine());
+            Member m = findMemberById(id);
+            if (m != null) {
+                System.out.print("Enter workout plan: ");
+                String plan = scanner.nextLine();
+                m.workoutPlan = plan;
+                System.out.println("Workout plan assigned.");
+            } else {
+                System.out.println("Member not found.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Invalid member ID");
+        }
+    }
+
+    static void updatePayment() {
+        try {
+            System.out.print("Enter member ID: ");
+            int id = Integer.parseInt(scanner.nextLine());
+            Member m = findMemberById(id);
+            if (m != null) {
+                m.paymentStatus = true;
+                System.out.println("Payment status updated");
+            } else {
+                System.out.println("Member not found");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid member ID");
+        }
+    }
+
+    static Member findMemberById(int id) {
+        for (Member m : members) {
+            if (m.id == id) return m;
+        }
+        return null;
+    }
+}
